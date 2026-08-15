@@ -1,0 +1,359 @@
+:root {
+    --bg-dark: #070b14;
+    --card-bg: rgba(18, 25, 44, 0.85);
+    --neon-cyan: #00f2fe;
+    --neon-blue: #4facfe;
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+    --border-glow: rgba(0, 242, 254, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(circle at 10% 15%, rgba(79, 172, 254, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 90% 85%, rgba(247, 37, 133, 0.12) 0%, transparent 45%);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px;
+}
+
+/* 2-Column Responsive Dashboard Layout */
+.main-layout {
+    width: 100%;
+    max-width: 1050px;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 860px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Glassmorphism Cards */
+.calculator-card, .records-card, .dev-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glow);
+    border-radius: 24px;
+    padding: 26px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 22px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Inputs Styling */
+.input-group {
+    margin-bottom: 16px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-sub);
+    margin-bottom: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-group input {
+    width: 100%;
+    background: rgba(10, 15, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 13px 16px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
+}
+
+/* Button */
+.btn-calculate {
+    width: 100%;
+    padding: 14px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #00f2fe, #4facfe);
+    color: #050b14;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 242, 254, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-calculate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(0, 242, 254, 0.45);
+}
+
+/* Results Grid */
+.results-grid {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.stat-box {
+    background: rgba(10, 15, 30, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 14px;
+    text-align: center;
+}
+
+.stat-box.main-age {
+    grid-column: span 2;
+    display: flex;
+    justify-content: space-around;
+    background: rgba(0, 242, 254, 0.08);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+}
+
+.unit-box span {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--neon-cyan);
+    line-height: 1;
+}
+
+.unit-box p {
+    font-size: 0.7rem;
+    color: var(--text-sub);
+    letter-spacing: 0.8px;
+    margin-top: 4px;
+}
+
+.stat-box .icon {
+    font-size: 1.3rem;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.stat-box h4 {
+    font-size: 0.72rem;
+    color: var(--text-sub);
+    margin-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.stat-box p {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.status-msg {
+    text-align: center;
+    font-size: 0.82rem;
+    margin-top: 14px;
+    font-weight: 600;
+}
+
+.status-msg.success { color: #4ade80; }
+.status-msg.error { color: #f87171; }
+
+/* Records Table */
+.records-card h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: #e2e8f0;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+
+th, td {
+    padding: 10px 8px;
+    text-align: left;
+}
+
+th {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--neon-cyan);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(8px);
+}
+
+td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    color: #cbd5e1;
+}
+
+/* =========================================
+   🔥 DEVELOPER CARD & FIRE BURN EFFECT 🔥
+========================================= */
+
+.dev-card {
+    border: 2px solid rgba(255, 100, 0, 0.35);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.dev-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #fb923c;
+    background: rgba(251, 146, 60, 0.12);
+    border: 1px solid rgba(251, 146, 60, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.dev-name {
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff, #fdba74, #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+}
+
+.dev-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dev-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.dev-item:hover {
+    transform: translateX(4px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #fb923c;
+}
+
+.dev-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.dev-text {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.dev-text .label {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-sub);
+    text-transform: uppercase;
+}
+
+.dev-text .value {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 🔥 3-Second High Flame + Slowdown Fire Animation 🔥 */
+.dev-card:hover {
+    animation: fireBlaze 4.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes fireBlaze {
+    0% {
+        border-color: #ff3b00;
+        box-shadow: 0 0 15px #ff3b00, inset 0 0 15px rgba(255, 59, 0, 0.3);
+    }
+    15% {
+        border-color: #ffd000;
+        box-shadow: 0 0 35px #ff5100, 0 0 65px #ff9900, inset 0 0 25px rgba(255, 100, 0, 0.5);
+    }
+    30% {
+        border-color: #ff1100;
+        box-shadow: 0 0 25px #ff3300, 0 0 50px #ff7700, inset 0 0 20px rgba(255, 0, 0, 0.4);
+    }
+    45% {
+        border-color: #ffaa00;
+        box-shadow: 0 0 50px #ff3b00, 0 0 85px #ffbb00, inset 0 0 35px rgba(255, 150, 0, 0.6);
+    }
+    60% {
+        border-color: #ff4500;
+        box-shadow: 0 0 35px #ff2200, 0 0 65px #ff7700, inset 0 0 25px rgba(255, 50, 0, 0.5);
+    }
+    66% {
+        border-color: #ff5500;
+        box-shadow: 0 0 25px #ff4400, 0 0 45px #ff8800, inset 0 0 15px rgba(255, 80, 0, 0.3);
+    }
+    85% {
+        border-color: rgba(255, 85, 0, 0.5);
+        box-shadow: 0 0 15px rgba(255, 68, 0, 0.4), inset 0 0 8px rgba(255, 80, 0, 0.2);
+    }
+    100% {
+        border-color: rgba(255, 100, 0, 0.35);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    }
+}

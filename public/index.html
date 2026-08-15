@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator & Analytics</title>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-layout">
+        
+        <!-- LEFT PANEL: Main Calculator & Results -->
+        <div class="calculator-card">
+            <h1>🎂 Age Calculator</h1>
+            
+            <div class="input-group">
+                <label for="userName">Full Name</label>
+                <input type="text" id="userName" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="input-group">
+                <label for="userDob">Date of Birth</label>
+                <input type="date" id="userDob" required>
+            </div>
+
+            <button id="calculateBtn" class="btn-calculate">⚡ Calculate & Save</button>
+
+            <!-- Results Grid -->
+            <div id="resultSection" class="results-grid" style="display: none;">
+                <div class="stat-box main-age">
+                    <div class="unit-box">
+                        <span id="yearsVal">0</span>
+                        <p>YEARS</p>
+                    </div>
+                    <div class="unit-box">
+                        <span id="monthsVal">0</span>
+                        <p>MONTHS</p>
+                    </div>
+                    <div class="unit-box">
+                        <span id="daysVal">0</span>
+                        <p>DAYS</p>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <span class="icon">🌙</span>
+                    <h4>Zodiac Sign</h4>
+                    <p id="zodiacVal">-</p>
+                </div>
+
+                <div class="stat-box">
+                    <span class="icon">⏳</span>
+                    <h4>Total Days Lived</h4>
+                    <p id="totalDaysVal">-</p>
+                </div>
+
+                <div class="stat-box">
+                    <span class="icon">🎂</span>
+                    <h4>Next Birthday</h4>
+                    <p id="nextBirthdayVal">-</p>
+                </div>
+
+                <div class="stat-box">
+                    <span class="icon">🗓️</span>
+                    <h4>Birth Year Type</h4>
+                    <p id="yearTypeVal">-</p>
+                </div>
+            </div>
+
+            <!-- Status Message Box -->
+            <div id="statusMessage" class="status-msg"></div>
+        </div>
+
+        <!-- RIGHT PANEL: Records Table + Developer Card -->
+        <div class="sidebar-panel">
+            
+            <!-- Recent Records Table -->
+            <div class="records-card">
+                <h3>📋 Recent Saved Records</h3>
+                <div class="table-wrapper">
+                    <table id="recordsTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>DOB</th>
+                                <th>Zodiac</th>
+                                <th>Days</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsBody">
+                            <!-- Dynamic rows via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Developer Profile Card -->
+            <div class="dev-card">
+                <div class="dev-badge">⚡ CREATED BY DEVELOPER</div>
+                <h2 class="dev-name">Adarsh Dixit</h2>
+                
+                <div class="dev-links">
+                    <!-- Instagram Link -->
+                    <a href="https://instagram.com/unique_world99.9" target="_blank" class="dev-item">
+                        <span class="dev-icon">📸</span>
+                        <div class="dev-text">
+                            <span class="label">Instagram</span>
+                            <span class="value">@unique_world99.9</span>
+                        </div>
+                    </a>
+
+                    <!-- Email Link -->
+                    <a href="mailto:adarshdixit2021@gmail.com" class="dev-item">
+                        <span class="dev-icon">📩</span>
+                        <div class="dev-text">
+                            <span class="label">Contact Developer</span>
+                            <span class="value">adarshdixit2021@gmail.com</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div> <!-- End of sidebar-panel -->
+
+    </div> <!-- End of main-layout -->
+
+    <script src="script.js"></script>
+</body>
+</html>
