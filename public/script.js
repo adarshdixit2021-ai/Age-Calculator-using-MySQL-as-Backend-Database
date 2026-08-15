@@ -1,22 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
-    loadRecentRecords();
+    loadRecords();
+
+    // Attach click listener to the button
+    const btn = document.querySelector("button") || document.getElementById("calculateBtn");
+    if (btn) {
+        btn.addEventListener("click", handleCalculate);
+    }
 });
 
-const calculateBtn = document.getElementById("calculateBtn") || document.querySelector("button");
+function handleCalculate(e) {
+    if (e) e.preventDefault();
 
-function calculateAgeAndStats() {
-    const nameInput = document.getElementById("userName") || document.querySelector("input[type='text']");
-    const dobInput = document.getElementById("dob") || document.querySelector("input[type='date']");
-    const statusMsg = document.getElementById("statusMessage") || document.getElementById("statusMsg");
+    // 1. Get Inputs
+    const nameInput = document.querySelector("input[type='text']") || document.getElementById("name");
+    const dobInput = document.querySelector("input[type='date']") || document.getElementById("dob");
 
-    const name = nameInput ? nameInput.value.trim() : "Guest";
+    const name = nameInput && nameInput.value.trim() ? nameInput.value.trim() : "Guest";
     const dobValue = dobInput ? dobInput.value : "";
 
     if (!dobValue) {
-        if (statusMsg) {
-            statusMsg.style.color = "#ff4d4d";
-            statusMsg.innerText = "Please select a valid date of birth!";
-        }
+        alert("Please select a date of birth!");
         return;
     }
 
@@ -24,14 +27,11 @@ function calculateAgeAndStats() {
     const today = new Date();
 
     if (dob > today) {
-        if (statusMsg) {
-            statusMsg.style.color = "#ff4d4d";
-            statusMsg.innerText = "Date of birth cannot be in the future!";
-        }
+        alert("Date of birth cannot be in the future!");
         return;
     }
 
-    // Exact Age Calculation
+    // 2. Exact Age Calculation
     let years = today.getFullYear() - dob.getFullYear();
     let months = today.getMonth() - dob.getMonth();
     let days = today.getDate() - dob.getDate();
@@ -57,92 +57,91 @@ function calculateAgeAndStats() {
     }
     const daysToNextBday = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
 
-    // Birth Year Type (Leap vs Standard)
+    // Birth Year Type
     const birthYear = dob.getFullYear();
     const isLeap = (birthYear % 4 === 0 && birthYear % 100 !== 0) || (birthYear % 400 === 0);
     const yearType = isLeap ? "Leap Year" : "Standard Year";
 
-    // Zodiac Sign
-    const zodiac = getZodiacSign(dob.getDate(), dob.getMonth() + 1);
+    // Zodiac Sign Calculation
+    const zodiac = getZodiac(dob.getDate(), dob.getMonth() + 1);
 
-    // Update UI Cards
-    updateText("yearsVal", years);
-    updateText("monthsVal", months);
-    updateText("daysVal", days);
-    updateText("zodiacVal", zodiac);
-    updateText("totalDaysVal", totalDaysLived.toLocaleString());
-    updateText("nextBdayVal", `${daysToNextBday} Days`);
-    updateText("yearTypeVal", yearType);
+    // 3. Update Result Card Values
+    setCardValue("YEARS", years);
+    setCardValue("MONTHS", months);
+    setCardValue("DAYS", days);
+    setCardValue("ZODIAC SIGN", zodiac);
+    setCardValue("TOTAL DAYS LIVED", totalDaysLived.toLocaleString());
+    setCardValue("NEXT BIRTHDAY", `${daysToNextBday} Days`);
+    setCardValue("BIRTH YEAR TYPE", yearType);
 
-    // Save record to LocalStorage (No Backend Error)
-    saveRecordLocally({
-        name: name || "Anonymous",
+    // 4. Save to Local Storage
+    const newRecord = {
+        name: name,
         dob: dobValue,
         zodiac: zodiac,
         days: totalDaysLived.toLocaleString()
-    });
+    };
 
-    if (statusMsg) {
-        statusMsg.style.color = "#00ff88";
-        statusMsg.innerText = "✓ Record calculated & saved!";
+    let records = JSON.parse(localStorage.getItem("ageCalculatorRecords") || "[]");
+    records.unshift(newRecord);
+    if (records.length > 5) records.pop();
+    localStorage.setItem("ageCalculatorRecords", JSON.stringify(records));
+
+    // 5. Render Table
+    renderTable(records);
+}
+
+function setCardValue(labelMatch, value) {
+    const allCards = document.querySelectorAll("div, p, span, h1, h2, h3, h4");
+    for (let el of allCards) {
+        if (el.children.length === 0 && el.innerText.trim().toUpperCase() === labelMatch) {
+            const parent = el.parentElement;
+            if (parent) {
+                const valueElem = parent.querySelector("h1, h2, h3, h4, .val, .value, span, strong") || parent.children[0];
+                if (valueElem && valueElem !== el) {
+                    valueElem.innerText = value;
+                    return;
+                }
+            }
+        }
     }
 }
 
-function updateText(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.innerText = value;
+function getZodiac(day, month) {
+    const days = [20, 19, 21, 20, 21, 22, 23, 23, 23, 24, 22, 22];
+    const signs = ["Capricorn", "Aquarius", "Pisces", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn"];
+    return day < days[month - 1] ? signs[month - 1] : signs[month];
 }
 
-function getZodiacSign(day, month) {
-    const signs = [
-        { name: "Capricorn", maxDay: 19 },
-        { name: "Aquarius", maxDay: 18 },
-        { name: "Pisces", maxDay: 20 },
-        { name: "Aries", maxDay: 19 },
-        { name: "Taurus", maxDay: 20 },
-        { name: "Gemini", maxDay: 20 },
-        { name: "Cancer", maxDay: 22 },
-        { name: "Leo", maxDay: 22 },
-        { name: "Virgo", maxDay: 22 },
-        { name: "Libra", maxDay: 22 },
-        { name: "Scorpio", maxDay: 21 },
-        { name: "Sagittarius", maxDay: 21 },
-        { name: "Capricorn", maxDay: 31 }
-    ];
-    const monthIndex = month - 1;
-    return day <= signs[monthIndex].maxDay ? (monthIndex === 0 ? "Capricorn" : signs[monthIndex - 1].name) : signs[monthIndex].name;
+function loadRecords() {
+    const records = JSON.parse(localStorage.getItem("ageCalculatorRecords") || "[]");
+    renderTable(records);
 }
 
-function saveRecordLocally(record) {
-    let records = JSON.parse(localStorage.getItem("savedAgeRecords")) || [];
-    records.unshift(record);
-    if (records.length > 5) records.pop(); // Keep top 5
-    localStorage.setItem("savedAgeRecords", JSON.stringify(records));
-    renderRecordsTable(records);
-}
+function renderTable(records) {
+    // Find tbody or records container
+    let tbody = document.querySelector("tbody");
+    
+    if (!tbody) {
+        // If table doesn't have tbody, look for table or record list container
+        const table = document.querySelector("table");
+        if (table) {
+            tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+        }
+    }
 
-function loadRecentRecords() {
-    let records = JSON.parse(localStorage.getItem("savedAgeRecords")) || [];
-    renderRecordsTable(records);
-}
-
-function renderRecordsTable(records) {
-    const tableBody = document.getElementById("recordsTableBody") || document.querySelector("tbody");
-    if (!tableBody) return;
-
-    tableBody.innerHTML = "";
-    records.forEach(r => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${r.name}</td>
-            <td>${r.dob}</td>
-            <td>${r.zodiac}</td>
-            <td>${r.days}</td>
-        `;
-        tableBody.appendChild(row);
-    });
-}
-
-if (calculateBtn) {
-    calculateBtn.addEventListener("click", calculateAgeAndStats);
+    if (tbody) {
+        tbody.innerHTML = "";
+        records.forEach(r => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td style="padding: 8px; color: #fff; font-size: 0.85rem;">${r.name}</td>
+                <td style="padding: 8px; color: #a0aec0; font-size: 0.85rem;">${r.dob}</td>
+                <td style="padding: 8px; color: #38bdf8; font-size: 0.85rem;">${r.zodiac}</td>
+                <td style="padding: 8px; color: #34d399; font-size: 0.85rem;">${r.days}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
 }
