@@ -7,75 +7,76 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="main-container">
-        <!-- Left Side: Calculator Section -->
-        <div class="calculator-card">
-            <div class="header">
+    <div class="container">
+        <!-- Left Column: Main Calculator -->
+        <div class="card calc-card">
+            <div class="card-header">
                 <h2>🎂 Age Calculator</h2>
             </div>
 
-            <div class="input-group">
+            <div class="form-group">
                 <label for="userName">FULL NAME</label>
-                <input type="text" id="userName" placeholder="Enter your name" autocomplete="off">
+                <input type="text" id="userName" placeholder="e.g. Adarsh Dixit" autocomplete="off">
             </div>
 
-            <div class="input-group">
+            <div class="form-group">
                 <label for="dob">DATE OF BIRTH</label>
                 <input type="date" id="dob">
             </div>
 
-            <button id="calculateBtn" class="btn-calculate">⚡ Calculate & Save</button>
+            <button id="calculateBtn" class="glow-btn">⚡ Calculate & Save</button>
 
-            <!-- Results Grid -->
-            <div class="results-grid" id="resultsGrid">
-                <div class="result-box">
+            <p id="statusMsg" class="status-text"></p>
+
+            <!-- Primary Age Output Grid -->
+            <div class="primary-grid">
+                <div class="stat-pill">
                     <h1 id="yearsVal">--</h1>
                     <span>YEARS</span>
                 </div>
-                <div class="result-box">
+                <div class="stat-pill">
                     <h1 id="monthsVal">--</h1>
                     <span>MONTHS</span>
                 </div>
-                <div class="result-box">
+                <div class="stat-pill">
                     <h1 id="daysVal">--</h1>
                     <span>DAYS</span>
                 </div>
             </div>
 
-            <!-- Detailed Analytics Cards -->
-            <div class="analytics-grid" id="analyticsGrid">
-                <div class="analytics-box">
-                    <span class="icon">🌙</span>
-                    <p class="label">ZODIAC SIGN</p>
+            <!-- Detailed Analytics 2x2 Grid -->
+            <div class="analytics-grid">
+                <div class="analytics-tile">
+                    <span class="tile-icon">🌙</span>
+                    <span class="tile-label">ZODIAC SIGN</span>
                     <h3 id="zodiacVal">--</h3>
                 </div>
-                <div class="analytics-box">
-                    <span class="icon">⌛</span>
-                    <p class="label">TOTAL DAYS LIVED</p>
+                <div class="analytics-tile">
+                    <span class="tile-icon">⌛</span>
+                    <span class="tile-label">TOTAL DAYS LIVED</span>
                     <h3 id="totalDaysVal">--</h3>
                 </div>
-                <div class="analytics-box">
-                    <span class="icon">🎂</span>
-                    <p class="label">NEXT BIRTHDAY</p>
+                <div class="analytics-tile">
+                    <span class="tile-icon">🎂</span>
+                    <span class="tile-label">NEXT BIRTHDAY</span>
                     <h3 id="nextBdayVal">--</h3>
                 </div>
-                <div class="analytics-box">
-                    <span class="icon">📅</span>
-                    <p class="label">BIRTH YEAR TYPE</p>
+                <div class="analytics-tile">
+                    <span class="tile-icon">📅</span>
+                    <span class="tile-label">BIRTH YEAR TYPE</span>
                     <h3 id="yearTypeVal">--</h3>
                 </div>
             </div>
-            
-            <p id="statusMsg" class="status-msg"></p>
         </div>
 
-        <!-- Right Side: Records & Developer Branding -->
+        <!-- Right Column: Sidebar (Records & Dev Card) -->
         <div class="sidebar">
-            <div class="records-card">
-                <div class="card-title">
-                    <span>📋</span> Recent Saved Records
+            <!-- Records Box -->
+            <div class="card records-card">
+                <div class="section-title">
+                    📋 Recent Saved Records
                 </div>
-                <div class="table-container">
+                <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
@@ -86,29 +87,30 @@
                             </tr>
                         </thead>
                         <tbody id="recordsTableBody">
-                            <!-- Injected by script.js -->
+                            <!-- Populated via script.js -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <div class="developer-card">
-                <div class="dev-badge">⚡ CREATED BY DEVELOPER</div>
+            <!-- Developer Profile Box -->
+            <div class="card dev-card">
+                <div class="badge">⚡ CREATED BY DEVELOPER</div>
                 <h2 class="dev-name">Adarsh Dixit</h2>
-                
-                <div class="contact-item">
-                    <span class="dev-icon">📸</span>
+
+                <div class="info-row">
+                    <span class="info-icon">📸</span>
                     <div>
-                        <p class="contact-label">INSTAGRAM</p>
-                        <p class="contact-value">@unique_world99.9</p>
+                        <small>INSTAGRAM</small>
+                        <p>@unique_world99.9</p>
                     </div>
                 </div>
 
-                <div class="contact-item">
-                    <span class="dev-icon">📩</span>
+                <div class="info-row">
+                    <span class="info-icon">📩</span>
                     <div>
-                        <p class="contact-label">CONTACT DEVELOPER</p>
-                        <p class="contact-value">adarshdixit2021@gmail.com</p>
+                        <small>CONTACT DEVELOPER</small>
+                        <p>adarshdixit2021@gmail.com</p>
                     </div>
                 </div>
             </div>
