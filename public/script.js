@@ -1,154 +1,148 @@
-// Zodiac Sign Calculation
+document.addEventListener("DOMContentLoaded", () => {
+    loadRecentRecords();
+});
+
+const calculateBtn = document.getElementById("calculateBtn") || document.querySelector("button");
+
+function calculateAgeAndStats() {
+    const nameInput = document.getElementById("userName") || document.querySelector("input[type='text']");
+    const dobInput = document.getElementById("dob") || document.querySelector("input[type='date']");
+    const statusMsg = document.getElementById("statusMessage") || document.getElementById("statusMsg");
+
+    const name = nameInput ? nameInput.value.trim() : "Guest";
+    const dobValue = dobInput ? dobInput.value : "";
+
+    if (!dobValue) {
+        if (statusMsg) {
+            statusMsg.style.color = "#ff4d4d";
+            statusMsg.innerText = "Please select a valid date of birth!";
+        }
+        return;
+    }
+
+    const dob = new Date(dobValue);
+    const today = new Date();
+
+    if (dob > today) {
+        if (statusMsg) {
+            statusMsg.style.color = "#ff4d4d";
+            statusMsg.innerText = "Date of birth cannot be in the future!";
+        }
+        return;
+    }
+
+    // Exact Age Calculation
+    let years = today.getFullYear() - dob.getFullYear();
+    let months = today.getMonth() - dob.getMonth();
+    let days = today.getDate() - dob.getDate();
+
+    if (days < 0) {
+        months--;
+        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        days += prevMonth.getDate();
+    }
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    // Total Days Lived
+    const diffTime = Math.abs(today - dob);
+    const totalDaysLived = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    // Next Birthday Countdown
+    let nextBday = new Date(today.getFullYear(), dob.getMonth(), dob.getDate());
+    if (today > nextBday) {
+        nextBday.setFullYear(today.getFullYear() + 1);
+    }
+    const daysToNextBday = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
+
+    // Birth Year Type (Leap vs Standard)
+    const birthYear = dob.getFullYear();
+    const isLeap = (birthYear % 4 === 0 && birthYear % 100 !== 0) || (birthYear % 400 === 0);
+    const yearType = isLeap ? "Leap Year" : "Standard Year";
+
+    // Zodiac Sign
+    const zodiac = getZodiacSign(dob.getDate(), dob.getMonth() + 1);
+
+    // Update UI Cards
+    updateText("yearsVal", years);
+    updateText("monthsVal", months);
+    updateText("daysVal", days);
+    updateText("zodiacVal", zodiac);
+    updateText("totalDaysVal", totalDaysLived.toLocaleString());
+    updateText("nextBdayVal", `${daysToNextBday} Days`);
+    updateText("yearTypeVal", yearType);
+
+    // Save record to LocalStorage (No Backend Error)
+    saveRecordLocally({
+        name: name || "Anonymous",
+        dob: dobValue,
+        zodiac: zodiac,
+        days: totalDaysLived.toLocaleString()
+    });
+
+    if (statusMsg) {
+        statusMsg.style.color = "#00ff88";
+        statusMsg.innerText = "✓ Record calculated & saved!";
+    }
+}
+
+function updateText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = value;
+}
+
 function getZodiacSign(day, month) {
     const signs = [
-        { sign: "Capricorn", m: 1, d: 20 }, { sign: "Aquarius", m: 2, d: 19 },
-        { sign: "Pisces", m: 3, d: 20 }, { sign: "Aries", m: 4, d: 20 },
-        { sign: "Taurus", m: 5, d: 21 }, { sign: "Gemini", m: 6, d: 21 },
-        { sign: "Cancer", m: 7, d: 22 }, { sign: "Leo", m: 8, d: 23 },
-        { sign: "Virgo", m: 9, d: 23 }, { sign: "Libra", m: 10, d: 23 },
-        { sign: "Scorpio", m: 11, d: 22 }, { sign: "Sagittarius", m: 12, d: 21 },
-        { sign: "Capricorn", m: 12, d: 31 }
+        { name: "Capricorn", maxDay: 19 },
+        { name: "Aquarius", maxDay: 18 },
+        { name: "Pisces", maxDay: 20 },
+        { name: "Aries", maxDay: 19 },
+        { name: "Taurus", maxDay: 20 },
+        { name: "Gemini", maxDay: 20 },
+        { name: "Cancer", maxDay: 22 },
+        { name: "Leo", maxDay: 22 },
+        { name: "Virgo", maxDay: 22 },
+        { name: "Libra", maxDay: 22 },
+        { name: "Scorpio", maxDay: 21 },
+        { name: "Sagittarius", maxDay: 21 },
+        { name: "Capricorn", maxDay: 31 }
     ];
-    for (let i = 0; i < signs.length; i++) {
-        if (month === signs[i].m && day <= signs[i].d) return signs[i].sign;
-        if (month === signs[i].m && day > signs[i].d && signs[i + 1]) return signs[i + 1].sign;
-    }
-    return "Capricorn";
+    const monthIndex = month - 1;
+    return day <= signs[monthIndex].maxDay ? (monthIndex === 0 ? "Capricorn" : signs[monthIndex - 1].name) : signs[monthIndex].name;
 }
 
-// Fetch & Load Table Records
-async function loadRecords() {
-    try {
-        const response = await fetch('/api/records');
-        if (!response.ok) return;
-        const data = await response.json();
-        const tbody = document.getElementById('recordsBody');
-        if (!tbody) return;
-        tbody.innerHTML = '';
-
-        if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; opacity:0.6;">No records found</td></tr>';
-            return;
-        }
-
-        data.forEach(item => {
-            const dateObj = new Date(item.dob);
-            const formattedDate = dateObj.toLocaleDateString('en-GB');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><strong>${item.name}</strong></td>
-                <td>${formattedDate}</td>
-                <td>${item.zodiac_sign || '-'}</td>
-                <td>${item.total_days_lived ? Number(item.total_days_lived).toLocaleString() : '-'}</td>
-            `;
-            tbody.appendChild(row);
-        });
-    } catch (err) {
-        console.error('Error loading records:', err);
-    }
+function saveRecordLocally(record) {
+    let records = JSON.parse(localStorage.getItem("savedAgeRecords")) || [];
+    records.unshift(record);
+    if (records.length > 5) records.pop(); // Keep top 5
+    localStorage.setItem("savedAgeRecords", JSON.stringify(records));
+    renderRecordsTable(records);
 }
 
-// Page Load Event
-document.addEventListener('DOMContentLoaded', () => {
-    loadRecords();
+function loadRecentRecords() {
+    let records = JSON.parse(localStorage.getItem("savedAgeRecords")) || [];
+    renderRecordsTable(records);
+}
 
-    const calculateBtn = document.getElementById('calculateBtn');
-    if (!calculateBtn) return;
+function renderRecordsTable(records) {
+    const tableBody = document.getElementById("recordsTableBody") || document.querySelector("tbody");
+    if (!tableBody) return;
 
-    calculateBtn.addEventListener('click', async () => {
-        const nameInput = document.getElementById('userName').value.trim();
-        const dobInput = document.getElementById('userDob').value;
-        const statusMsg = document.getElementById('statusMessage');
-
-        if (!nameInput || !dobInput) {
-            statusMsg.className = 'status-msg error';
-            statusMsg.innerText = '⚠️ Please enter both Name and Date of Birth!';
-            return;
-        }
-
-        const birthDate = new Date(dobInput);
-        const today = new Date();
-
-        if (birthDate > today) {
-            statusMsg.className = 'status-msg error';
-            statusMsg.innerText = '⚠️ Birth date cannot be in the future!';
-            return;
-        }
-
-        // Age Calculation
-        let years = today.getFullYear() - birthDate.getFullYear();
-        let months = today.getMonth() - birthDate.getMonth();
-        let days = today.getDate() - birthDate.getDate();
-
-        if (days < 0) {
-            months--;
-            const prevMonthDays = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
-            days += prevMonthDays;
-        }
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-
-        // Total Days Lived
-        const diffTime = Math.abs(today - birthDate);
-        const totalDaysLived = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-        // Zodiac Sign Calculation
-        const bMonth = birthDate.getMonth() + 1;
-        const bDay = birthDate.getDate();
-        const zodiac = getZodiacSign(bDay, bMonth);
-
-        // Leap Year Check
-        const birthYear = birthDate.getFullYear();
-        const isLeap = (birthYear % 4 === 0 && birthYear % 100 !== 0) || (birthYear % 400 === 0);
-
-        // Next Birthday Countdown
-        const nextBday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-        if (today > nextBday) {
-            nextBday.setFullYear(today.getFullYear() + 1);
-        }
-        const daysToNextBday = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
-
-        // Render UI Results
-        document.getElementById('yearsVal').innerText = years;
-        document.getElementById('monthsVal').innerText = months;
-        document.getElementById('daysVal').innerText = days;
-        document.getElementById('zodiacVal').innerText = zodiac;
-        document.getElementById('totalDaysVal').innerText = totalDaysLived.toLocaleString();
-        document.getElementById('nextBirthdayVal').innerText = `${daysToNextBday} Days`;
-        document.getElementById('yearTypeVal').innerText = isLeap ? 'Leap Year' : 'Standard Year';
-
-        document.getElementById('resultSection').style.display = 'grid';
-
-        // Save to Backend Database
-        statusMsg.className = 'status-msg';
-        statusMsg.innerText = 'Saving record to database...';
-
-        try {
-            const response = await fetch('/api/save-record', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: nameInput,
-                    dob: dobInput,
-                    zodiac_sign: zodiac,
-                    total_days_lived: totalDaysLived
-                })
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                statusMsg.className = 'status-msg success';
-                statusMsg.innerText = '✓ Saved successfully to MySQL database!';
-                loadRecords(); // Auto-refresh recent records table
-            } else {
-                statusMsg.className = 'status-msg error';
-                statusMsg.innerText = '✗ Database error: ' + (data.error || 'Failed to save');
-            }
-        } catch (err) {
-            statusMsg.className = 'status-msg error';
-            statusMsg.innerText = '✗ Server connection failed.';
-        }
+    tableBody.innerHTML = "";
+    records.forEach(r => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${r.name}</td>
+            <td>${r.dob}</td>
+            <td>${r.zodiac}</td>
+            <td>${r.days}</td>
+        `;
+        tableBody.appendChild(row);
     });
-});
+}
+
+if (calculateBtn) {
+    calculateBtn.addEventListener("click", calculateAgeAndStats);
+}
