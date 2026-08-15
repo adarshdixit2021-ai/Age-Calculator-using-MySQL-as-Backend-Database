@@ -1,25 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
-    loadRecords();
+    loadRecentRecords();
 
-    // Attach click listener to the button
-    const btn = document.querySelector("button") || document.getElementById("calculateBtn");
-    if (btn) {
-        btn.addEventListener("click", handleCalculate);
+    const calculateBtn = document.getElementById("calculateBtn");
+    if (calculateBtn) {
+        calculateBtn.addEventListener("click", calculateAge);
     }
 });
 
-function handleCalculate(e) {
+function calculateAge(e) {
     if (e) e.preventDefault();
 
-    // 1. Get Inputs
-    const nameInput = document.querySelector("input[type='text']") || document.getElementById("name");
-    const dobInput = document.querySelector("input[type='date']") || document.getElementById("dob");
+    const nameInput = document.getElementById("userName");
+    const dobInput = document.getElementById("dob");
+    const statusMsg = document.getElementById("statusMsg");
 
-    const name = nameInput && nameInput.value.trim() ? nameInput.value.trim() : "Guest";
+    const name = nameInput && nameInput.value.trim() ? nameInput.value.trim() : "Adarsh";
     const dobValue = dobInput ? dobInput.value : "";
 
     if (!dobValue) {
-        alert("Please select a date of birth!");
+        if (statusMsg) {
+            statusMsg.style.color = "#ff4d4d";
+            statusMsg.innerText = "Please select a date of birth!";
+        }
         return;
     }
 
@@ -27,19 +29,22 @@ function handleCalculate(e) {
     const today = new Date();
 
     if (dob > today) {
-        alert("Date of birth cannot be in the future!");
+        if (statusMsg) {
+            statusMsg.style.color = "#ff4d4d";
+            statusMsg.innerText = "Date of birth cannot be in the future!";
+        }
         return;
     }
 
-    // 2. Exact Age Calculation
+    // Age in Years, Months, Days
     let years = today.getFullYear() - dob.getFullYear();
     let months = today.getMonth() - dob.getMonth();
     let days = today.getDate() - dob.getDate();
 
     if (days < 0) {
         months--;
-        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-        days += prevMonth.getDate();
+        const prevMonthDays = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+        days += prevMonthDays;
     }
     if (months < 0) {
         years--;
@@ -50,7 +55,7 @@ function handleCalculate(e) {
     const diffTime = Math.abs(today - dob);
     const totalDaysLived = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    // Next Birthday Countdown
+    // Next Birthday
     let nextBday = new Date(today.getFullYear(), dob.getMonth(), dob.getDate());
     if (today > nextBday) {
         nextBday.setFullYear(today.getFullYear() + 1);
@@ -62,86 +67,77 @@ function handleCalculate(e) {
     const isLeap = (birthYear % 4 === 0 && birthYear % 100 !== 0) || (birthYear % 400 === 0);
     const yearType = isLeap ? "Leap Year" : "Standard Year";
 
-    // Zodiac Sign Calculation
-    const zodiac = getZodiac(dob.getDate(), dob.getMonth() + 1);
+    // Zodiac Sign
+    const zodiac = getZodiacSign(dob.getDate(), dob.getMonth() + 1);
 
-    // 3. Update Result Card Values
-    setCardValue("YEARS", years);
-    setCardValue("MONTHS", months);
-    setCardValue("DAYS", days);
-    setCardValue("ZODIAC SIGN", zodiac);
-    setCardValue("TOTAL DAYS LIVED", totalDaysLived.toLocaleString());
-    setCardValue("NEXT BIRTHDAY", `${daysToNextBday} Days`);
-    setCardValue("BIRTH YEAR TYPE", yearType);
+    // Update Display Cards
+    document.getElementById("yearsVal").innerText = years;
+    document.getElementById("monthsVal").innerText = months;
+    document.getElementById("daysVal").innerText = days;
+    document.getElementById("zodiacVal").innerText = zodiac;
+    document.getElementById("totalDaysVal").innerText = totalDaysLived.toLocaleString();
+    document.getElementById("nextBdayVal").innerText = `${daysToNextBday} Days`;
+    document.getElementById("yearTypeVal").innerText = yearType;
 
-    // 4. Save to Local Storage
-    const newRecord = {
+    // Save and Render Table
+    saveRecordLocally({
         name: name,
         dob: dobValue,
         zodiac: zodiac,
         days: totalDaysLived.toLocaleString()
-    };
+    });
 
-    let records = JSON.parse(localStorage.getItem("ageCalculatorRecords") || "[]");
-    records.unshift(newRecord);
+    if (statusMsg) {
+        statusMsg.style.color = "#00ff88";
+        statusMsg.innerText = "✓ Record calculated & saved!";
+    }
+}
+
+function getZodiacSign(day, month) {
+    const signs = [
+        { name: "Capricorn", max: 19 },
+        { name: "Aquarius", max: 18 },
+        { name: "Pisces", max: 20 },
+        { name: "Aries", max: 19 },
+        { name: "Taurus", max: 20 },
+        { name: "Gemini", max: 20 },
+        { name: "Cancer", max: 22 },
+        { name: "Leo", max: 22 },
+        { name: "Virgo", max: 22 },
+        { name: "Libra", max: 22 },
+        { name: "Scorpio", max: 21 },
+        { name: "Sagittarius", max: 21 },
+        { name: "Capricorn", max: 31 }
+    ];
+    return day <= signs[month - 1].max ? (month === 1 ? "Capricorn" : signs[month - 2].name) : signs[month - 1].name;
+}
+
+function saveRecordLocally(record) {
+    let records = JSON.parse(localStorage.getItem("ageCalcRecords") || "[]");
+    records.unshift(record);
     if (records.length > 5) records.pop();
-    localStorage.setItem("ageCalculatorRecords", JSON.stringify(records));
-
-    // 5. Render Table
-    renderTable(records);
+    localStorage.setItem("ageCalcRecords", JSON.stringify(records));
+    renderRecordsTable(records);
 }
 
-function setCardValue(labelMatch, value) {
-    const allCards = document.querySelectorAll("div, p, span, h1, h2, h3, h4");
-    for (let el of allCards) {
-        if (el.children.length === 0 && el.innerText.trim().toUpperCase() === labelMatch) {
-            const parent = el.parentElement;
-            if (parent) {
-                const valueElem = parent.querySelector("h1, h2, h3, h4, .val, .value, span, strong") || parent.children[0];
-                if (valueElem && valueElem !== el) {
-                    valueElem.innerText = value;
-                    return;
-                }
-            }
-        }
-    }
+function loadRecentRecords() {
+    let records = JSON.parse(localStorage.getItem("ageCalcRecords") || "[]");
+    renderRecordsTable(records);
 }
 
-function getZodiac(day, month) {
-    const days = [20, 19, 21, 20, 21, 22, 23, 23, 23, 24, 22, 22];
-    const signs = ["Capricorn", "Aquarius", "Pisces", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn"];
-    return day < days[month - 1] ? signs[month - 1] : signs[month];
-}
+function renderRecordsTable(records) {
+    const tbody = document.getElementById("recordsTableBody");
+    if (!tbody) return;
 
-function loadRecords() {
-    const records = JSON.parse(localStorage.getItem("ageCalculatorRecords") || "[]");
-    renderTable(records);
-}
-
-function renderTable(records) {
-    // Find tbody or records container
-    let tbody = document.querySelector("tbody");
-    
-    if (!tbody) {
-        // If table doesn't have tbody, look for table or record list container
-        const table = document.querySelector("table");
-        if (table) {
-            tbody = document.createElement("tbody");
-            table.appendChild(tbody);
-        }
-    }
-
-    if (tbody) {
-        tbody.innerHTML = "";
-        records.forEach(r => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td style="padding: 8px; color: #fff; font-size: 0.85rem;">${r.name}</td>
-                <td style="padding: 8px; color: #a0aec0; font-size: 0.85rem;">${r.dob}</td>
-                <td style="padding: 8px; color: #38bdf8; font-size: 0.85rem;">${r.zodiac}</td>
-                <td style="padding: 8px; color: #34d399; font-size: 0.85rem;">${r.days}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
+    tbody.innerHTML = "";
+    records.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.dob}</td>
+            <td style="color: #38bdf8;">${item.zodiac}</td>
+            <td style="color: #34d399;">${item.days}</td>
+        `;
+        tbody.appendChild(row);
+    });
 }

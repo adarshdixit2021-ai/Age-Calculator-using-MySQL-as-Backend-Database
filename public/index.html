@@ -4,87 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Age Calculator & Analytics</title>
-
-    <!-- Google Fonts: Poppins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="main-layout">
-        
-        <!-- LEFT PANEL: Main Calculator & Results -->
+    <div class="main-container">
+        <!-- Left Side: Calculator Section -->
         <div class="calculator-card">
-            <h1>🎂 Age Calculator</h1>
-            
-            <div class="input-group">
-                <label for="userName">Full Name</label>
-                <input type="text" id="userName" placeholder="Enter your full name" required>
+            <div class="header">
+                <h2>🎂 Age Calculator</h2>
             </div>
 
             <div class="input-group">
-                <label for="userDob">Date of Birth</label>
-                <input type="date" id="userDob" required>
+                <label for="userName">FULL NAME</label>
+                <input type="text" id="userName" placeholder="Enter your name" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="dob">DATE OF BIRTH</label>
+                <input type="date" id="dob">
             </div>
 
             <button id="calculateBtn" class="btn-calculate">⚡ Calculate & Save</button>
 
             <!-- Results Grid -->
-            <div id="resultSection" class="results-grid" style="display: none;">
-                <div class="stat-box main-age">
-                    <div class="unit-box">
-                        <span id="yearsVal">0</span>
-                        <p>YEARS</p>
-                    </div>
-                    <div class="unit-box">
-                        <span id="monthsVal">0</span>
-                        <p>MONTHS</p>
-                    </div>
-                    <div class="unit-box">
-                        <span id="daysVal">0</span>
-                        <p>DAYS</p>
-                    </div>
+            <div class="results-grid" id="resultsGrid">
+                <div class="result-box">
+                    <h1 id="yearsVal">--</h1>
+                    <span>YEARS</span>
                 </div>
-
-                <div class="stat-box">
-                    <span class="icon">🌙</span>
-                    <h4>Zodiac Sign</h4>
-                    <p id="zodiacVal">-</p>
+                <div class="result-box">
+                    <h1 id="monthsVal">--</h1>
+                    <span>MONTHS</span>
                 </div>
-
-                <div class="stat-box">
-                    <span class="icon">⏳</span>
-                    <h4>Total Days Lived</h4>
-                    <p id="totalDaysVal">-</p>
-                </div>
-
-                <div class="stat-box">
-                    <span class="icon">🎂</span>
-                    <h4>Next Birthday</h4>
-                    <p id="nextBirthdayVal">-</p>
-                </div>
-
-                <div class="stat-box">
-                    <span class="icon">🗓️</span>
-                    <h4>Birth Year Type</h4>
-                    <p id="yearTypeVal">-</p>
+                <div class="result-box">
+                    <h1 id="daysVal">--</h1>
+                    <span>DAYS</span>
                 </div>
             </div>
 
-            <!-- Status Message Box -->
-            <div id="statusMessage" class="status-msg"></div>
+            <!-- Detailed Analytics Cards -->
+            <div class="analytics-grid" id="analyticsGrid">
+                <div class="analytics-box">
+                    <span class="icon">🌙</span>
+                    <p class="label">ZODIAC SIGN</p>
+                    <h3 id="zodiacVal">--</h3>
+                </div>
+                <div class="analytics-box">
+                    <span class="icon">⌛</span>
+                    <p class="label">TOTAL DAYS LIVED</p>
+                    <h3 id="totalDaysVal">--</h3>
+                </div>
+                <div class="analytics-box">
+                    <span class="icon">🎂</span>
+                    <p class="label">NEXT BIRTHDAY</p>
+                    <h3 id="nextBdayVal">--</h3>
+                </div>
+                <div class="analytics-box">
+                    <span class="icon">📅</span>
+                    <p class="label">BIRTH YEAR TYPE</p>
+                    <h3 id="yearTypeVal">--</h3>
+                </div>
+            </div>
+            
+            <p id="statusMsg" class="status-msg"></p>
         </div>
 
-        <!-- RIGHT PANEL: Records Table + Developer Card -->
-        <div class="sidebar-panel">
-            
-            <!-- Recent Records Table -->
+        <!-- Right Side: Records & Developer Branding -->
+        <div class="sidebar">
             <div class="records-card">
-                <h3>📋 Recent Saved Records</h3>
-                <div class="table-wrapper">
-                    <table id="recordsTable">
+                <div class="card-title">
+                    <span>📋</span> Recent Saved Records
+                </div>
+                <div class="table-container">
+                    <table>
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -93,42 +85,35 @@
                                 <th>Days</th>
                             </tr>
                         </thead>
-                        <tbody id="recordsBody">
-                            <!-- Dynamic rows via JS -->
+                        <tbody id="recordsTableBody">
+                            <!-- Injected by script.js -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Developer Profile Card -->
-            <div class="dev-card">
+            <div class="developer-card">
                 <div class="dev-badge">⚡ CREATED BY DEVELOPER</div>
                 <h2 class="dev-name">Adarsh Dixit</h2>
                 
-                <div class="dev-links">
-                    <!-- Instagram Link -->
-                    <a href="https://instagram.com/unique_world99.9" target="_blank" class="dev-item">
-                        <span class="dev-icon">📸</span>
-                        <div class="dev-text">
-                            <span class="label">Instagram</span>
-                            <span class="value">@unique_world99.9</span>
-                        </div>
-                    </a>
+                <div class="contact-item">
+                    <span class="dev-icon">📸</span>
+                    <div>
+                        <p class="contact-label">INSTAGRAM</p>
+                        <p class="contact-value">@unique_world99.9</p>
+                    </div>
+                </div>
 
-                    <!-- Email Link -->
-                    <a href="mailto:adarshdixit2021@gmail.com" class="dev-item">
-                        <span class="dev-icon">📩</span>
-                        <div class="dev-text">
-                            <span class="label">Contact Developer</span>
-                            <span class="value">adarshdixit2021@gmail.com</span>
-                        </div>
-                    </a>
+                <div class="contact-item">
+                    <span class="dev-icon">📩</span>
+                    <div>
+                        <p class="contact-label">CONTACT DEVELOPER</p>
+                        <p class="contact-value">adarshdixit2021@gmail.com</p>
+                    </div>
                 </div>
             </div>
-
-        </div> <!-- End of sidebar-panel -->
-
-    </div> <!-- End of main-layout -->
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
