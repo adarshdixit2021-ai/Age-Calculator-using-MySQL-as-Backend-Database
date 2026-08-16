@@ -1,122 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Age Calculator & Analytics</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Calculator</title>
+
+  <!-- Favicon / Tab Logo -->
+  <link rel="icon" type="image/png" href="images/logo.png">
+
+  <!-- PWA Manifest & Theme -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0ea5e9">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed: ', err));
+      });
+    }
+  </script>
 </head>
 <body>
-    <div class="container">
-        <!-- Left Column: Main Calculator -->
-        <div class="card calc-card">
-            <div class="card-header">
-                <h2>🎂 Age Calculator</h2>
-            </div>
 
-            <div class="form-group">
-                <label for="userName">FULL NAME</label>
-                <input type="text" id="userName" placeholder="e.g. Adarsh Dixit" autocomplete="off">
-            </div>
-
-            <div class="form-group">
-                <label for="dob">DATE OF BIRTH</label>
-                <input type="date" id="dob">
-            </div>
-
-            <button id="calculateBtn" class="glow-btn">⚡ Calculate & Save</button>
-
-            <p id="statusMsg" class="status-text"></p>
-
-            <!-- Primary Age Output Grid -->
-            <div class="primary-grid">
-                <div class="stat-pill">
-                    <h1 id="yearsVal">--</h1>
-                    <span>YEARS</span>
-                </div>
-                <div class="stat-pill">
-                    <h1 id="monthsVal">--</h1>
-                    <span>MONTHS</span>
-                </div>
-                <div class="stat-pill">
-                    <h1 id="daysVal">--</h1>
-                    <span>DAYS</span>
-                </div>
-            </div>
-
-            <!-- Detailed Analytics 2x2 Grid -->
-            <div class="analytics-grid">
-                <div class="analytics-tile">
-                    <span class="tile-icon">🌙</span>
-                    <span class="tile-label">ZODIAC SIGN</span>
-                    <h3 id="zodiacVal">--</h3>
-                </div>
-                <div class="analytics-tile">
-                    <span class="tile-icon">⌛</span>
-                    <span class="tile-label">TOTAL DAYS LIVED</span>
-                    <h3 id="totalDaysVal">--</h3>
-                </div>
-                <div class="analytics-tile">
-                    <span class="tile-icon">🎂</span>
-                    <span class="tile-label">NEXT BIRTHDAY</span>
-                    <h3 id="nextBdayVal">--</h3>
-                </div>
-                <div class="analytics-tile">
-                    <span class="tile-icon">📅</span>
-                    <span class="tile-label">BIRTH YEAR TYPE</span>
-                    <h3 id="yearTypeVal">--</h3>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Column: Sidebar (Records & Dev Card) -->
-        <div class="sidebar">
-            <!-- Records Box -->
-            <div class="card records-card">
-                <div class="section-title">
-                    📋 Recent Saved Records
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>DOB</th>
-                                <th>Zodiac</th>
-                                <th>Days</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recordsTableBody">
-                            <!-- Populated via script.js -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Developer Profile Box -->
-            <div class="card dev-card">
-                <div class="badge">⚡ CREATED BY DEVELOPER</div>
-                <h2 class="dev-name">Adarsh Dixit</h2>
-
-                <div class="info-row">
-                    <span class="info-icon">📸</span>
-                    <div>
-                        <small>INSTAGRAM</small>
-                        <p>@unique_world99.9</p>
-                    </div>
-                </div>
-
-                <div class="info-row">
-                    <span class="info-icon">📩</span>
-                    <div>
-                        <small>CONTACT DEVELOPER</small>
-                        <p>adarshdixit2021@gmail.com</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="main-wrapper">
+    <!-- Header / Logo Section -->
+    <div class="header-section">
+      <img src="images/logo.png" alt="Age Calculator Logo" class="app-logo">
+      <h2>🎂 Age Calculator</h2>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Main Container -->
+    <div class="container">
+      
+      <!-- Calculator Box -->
+      <div class="card calculator-card">
+        <div class="input-group">
+          <label>FULL NAME</label>
+          <input type="text" id="userName" placeholder="eg. Adarsh Dixit">
+        </div>
+
+        <div class="input-group">
+          <label>DATE OF BIRTH</label>
+          <input type="date" id="dobInput">
+        </div>
+
+        <button id="calcBtn" class="btn-primary">⚡ Calculate & Save</button>
+
+        <p id="errorMsg" class="error-text"></p>
+
+        <div class="results-grid">
+          <div class="res-box">
+            <h1 id="resYears">--</h1>
+            <span>YEARS</span>
+          </div>
+          <div class="res-box">
+            <h1 id="resMonths">--</h1>
+            <span>MONTHS</span>
+          </div>
+          <div class="res-box">
+            <h1 id="resDays">--</h1>
+            <span>DAYS</span>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span>🌙</span>
+            <small>ZODIAC SIGN</small>
+            <h3 id="resZodiac">--</h3>
+          </div>
+          <div class="stat-item">
+            <span>⌛</span>
+            <small>TOTAL DAYS LIVED</small>
+            <h3 id="resTotalDays">--</h3>
+          </div>
+          <div class="stat-item">
+            <span>🎂</span>
+            <small>NEXT BIRTHDAY</small>
+            <h3 id="resNextBday">--</h3>
+          </div>
+          <div class="stat-item">
+            <span>📅</span>
+            <small>BIRTH YEAR TYPE</small>
+            <h3 id="resYearType">--</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Records Card -->
+        <div class="card records-card">
+          <div class="card-header">📋 Recent Saved Records</div>
+          <div class="table-responsive">
+            <table id="recordsTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>DOB</th>
+                  <th>Zodiac</th>
+                  <th>Days</th>
+                </tr>
+              </thead>
+              <tbody id="recordsBody">
+                <!-- Dynamic Rows Inserted by JS -->
+              </tbody>
+            </table>
+            <p id="noRecordsMsg" class="empty-text">No records yet</p>
+          </div>
+        </div>
+
+        <!-- Developer Card -->
+        <div class="card dev-card">
+          <div class="badge-dev">⚡ CREATED BY DEVELOPER</div>
+          <h2>Adarsh Dixit</h2>
+
+          <div class="info-row">
+            <span class="info-icon">📸</span>
+            <div>
+              <small>INSTAGRAM</small>
+              <p>@unique_world99.9</p>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="info-icon">📩</span>
+            <div>
+              <small>CONTACT DEVELOPER</small>
+              <p>adarshdixit2021@gmail.com</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Offline App Download Section -->
+    <div class="app-download-container">
+      <div class="app-download-card">
+        
+        <div class="card-badge">
+          <span class="pulse-dot"></span>
+          <span>OFFLINE EDITION • V1.0</span>
+        </div>
+
+        <div class="app-icon-wrapper">
+          <div class="app-icon-glow"></div>
+          <img src="images/logo.png" alt="App Icon" class="app-card-icon">
+        </div>
+
+        <h2 class="card-title">Get the Offline App</h2>
+        <p class="card-desc">
+          Instant age breakdown, zodiac calculation & records storage — completely offline with zero data usage.
+        </p>
+
+        <div class="specs-grid">
+          <div class="spec-item">
+            <span class="spec-label">SIZE</span>
+            <span class="spec-val">~4.8 MB</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">ANDROID</span>
+            <span class="spec-val">8.0 & Above</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">SECURITY</span>
+            <span class="spec-val text-green">✓ Verified</span>
+          </div>
+        </div>
+
+        <a href="https://github.com/adarshdixit2021-ai/Age-Calculator-using-MySQL-as-Backend-Database/releases/latest/download/AgeCalculator.apk" class="btn-premium-download" download>
+          <div class="btn-icon-box">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </div>
+          <div class="btn-text-group">
+            <span class="btn-main-text">DOWNLOAD APK</span>
+            <span class="btn-sub-text">Direct Safe Download • Fast CDN</span>
+          </div>
+        </a>
+
+        <div class="security-footer">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#10b981" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <span>Clean Build • 100% Ad-Free • No Permissions Required</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
